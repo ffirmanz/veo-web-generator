@@ -110,18 +110,33 @@ export async function POST(req: NextRequest) {
     }
 
     // Download MP4 bytes
-    const dl = await ai.files.download({ file: fileRef });
-    const bytes = dl.data instanceof Uint8Array ? dl.data : new Uint8Array(dl.data as ArrayBuffer);
+   import { promises as fs } from "fs";
+import path from "path";
 
-    return new Response(Buffer.from(bytes), {
-      headers: {
-        "Content-Type": "video/mp4",
-        "Content-Disposition": `attachment; filename=veo_${Date.now()}.mp4`,
-        "Cache-Control": "no-store"
-      }
-    });
-  } catch (e: any) {
-    // Jangan log apiKey
-    return new Response(JSON.stringify({ error: e?.message || "Unknown error" }), { status: 500 });
-  }
+// ...
+// Setelah op.done === true:
+const fileRef = op?.response?.generatedVideos?.[0]?.video;
+if (!fileRef) {
+  return new Response(JSON.stringify({ error: "No video returned" }), { status: 502 });
 }
+
+// 1) Download ke disk (Node-only; wajib pakai downloadPath)
+const outPath = path.join("/tmp", `veo_${Date.now()}.mp4`);
+await ai.files.download({
+  file: fileRef,
+  downloadPath: outPath, // <— WAJIB
+}); // SDK akan menulis file ke outPath. :contentReference[oaicite:1]{index=1}
+
+// 2) Baca file & kirim ke klien
+const bytes = await fs.readFile(outPath);
+
+return new Response(bytes, {
+  headers: {
+    "Content-Type": "video/mp4",
+    "Content-Disposition": `attachment; filename=${path.basename(outPath)}`,
+    "Cache-Control": "no-store",
+  },
+});
+
+// (opsional) hapus file:
+// await fs.unlink(outPath).catch(() => {});
