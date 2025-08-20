@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.x"
   },
   "dependencies": {
     "@google/genai": "1.15.0",
