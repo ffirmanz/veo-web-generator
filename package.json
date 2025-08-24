@@ -1,13 +1,11 @@
 {
-  "name": "simple-translator-app",
+  "name": "public-translator-app",
   "version": "1.0.0",
-  "description": "A simple and secure translator app using Google Cloud API Key.",
-  "main": "server.js",
+  "description": "A translator app where users can input their own API key.",
+  "main": "api/translate.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/translate.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2"
