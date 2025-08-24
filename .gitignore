@@ -1,14 +1,3 @@
-# Node
+# .gitignore
+
 node_modules
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Next.js
-.next
-out
-
-# Env/OS
-.env*
-.DS_Store
