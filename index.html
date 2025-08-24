@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Penerjemah</title>
+    <title>Aplikasi Penerjemah Publik</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="panel">
             <h2>Teks (Bahasa Indonesia)</h2>
+            <label for="api-key-input" style="margin-bottom: 5px; font-weight: bold;">Google API Key Anda:</label>
+            <input type="password" id="api-key-input" placeholder="Masukkan API Key Google Translate Anda" style="margin-bottom: 15px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            
             <textarea id="source-text" placeholder="Ketik teks yang ingin diterjemahkan di sini..."></textarea>
             <button id="translate-btn">Terjemahkan</button>
         </div>
