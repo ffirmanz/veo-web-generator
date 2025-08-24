@@ -1,3 +1,5 @@
+// File: api/translate.js (SUDAH DIPERBAIKI)
+
 const express = require('express');
 const cors = require('cors');
 
@@ -5,7 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/translate-text', async (req, res) => {
+// Rute diubah menjadi '/'
+app.post('/', async (req, res) => {
     const { text, sourceLang = 'id', targetLang = 'en', apiKey } = req.body;
 
     if (!apiKey) {
