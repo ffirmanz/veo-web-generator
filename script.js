@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         translatedTextArea.value = 'Menerjemahkan...';
 
         try {
-            const response = await fetch('http://localhost:3000/translate-text', {
-                method: 'POST',
+           // Path ini akan otomatis diarahkan Vercel ke serverless function Anda
+const response = await fetch('/api/translate', { 
+    //...
+});                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
