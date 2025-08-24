@@ -1,49 +1,51 @@
-// File: api/translate.js (SUDAH DIPERBAIKI)
+// File: api/translate.js (Versi Definitif Tanpa Express)
 
-const express = require('express');
-const cors = require('cors');
+export default async function handler(request, response) {
+  // Hanya izinkan metode POST
+  if (request.method !== 'POST') {
+    response.setHeader('Allow', ['POST']);
+    return response.status(405).end('Method Not Allowed');
+  }
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Rute diubah menjadi '/'
-app.post('/', async (req, res) => {
-    const { text, sourceLang = 'id', targetLang = 'en', apiKey } = req.body;
+  try {
+    // Ambil data dari body request
+    const { text, sourceLang = 'id', targetLang = 'en', apiKey } = request.body;
 
     if (!apiKey) {
-        return res.status(400).json({ error: 'API Key wajib disertakan.' });
+      return response.status(400).json({ error: 'API Key wajib disertakan.' });
     }
     if (!text) {
-        return res.status(400).json({ error: 'Teks tidak boleh kosong.' });
+      return response.status(400).json({ error: 'Teks tidak boleh kosong.' });
     }
 
     const apiUrl = `https://translation.googleapis.com/v2?key=${apiKey}`;
 
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                q: text,
-                source: sourceLang,
-                target: targetLang
-            })
-        });
+    // Lakukan panggilan ke Google Translate API
+    const googleApiResponse = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q: text,
+        source: sourceLang,
+        target: targetLang,
+      }),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Google API Error: ${errorData.error.message}`);
-        }
-
-        const result = await response.json();
-        const translatedText = result.data.translations[0].translatedText;
-        
-        res.json({ translatedText: translatedText });
-    } catch (error) {
-        console.error("Error saat menerjemahkan:", error.message);
-        res.status(500).json({ error: 'Gagal menerjemahkan teks.' });
+    // Tangani jika Google API mengembalikan error
+    if (!googleApiResponse.ok) {
+      const errorData = await googleApiResponse.json();
+      throw new Error(`Google API Error: ${errorData.error.message}`);
     }
-});
 
-module.exports = app;
+    const result = await googleApiResponse.json();
+    const translatedText = result.data.translations[0].translatedText;
+
+    // Kirim respons sukses kembali ke frontend
+    return response.status(200).json({ translatedText: translatedText });
+
+  } catch (error) {
+    // Tangani error internal
+    console.error("Error di serverless function:", error.message);
+    return response.status(500).json({ error: 'Gagal menerjemahkan teks.' });
+  }
+}
